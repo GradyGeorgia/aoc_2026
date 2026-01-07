@@ -1,5 +1,6 @@
 from enum import Enum, auto
 import unittest
+import unittest
 
 class Direction(Enum):
     UP = 0
@@ -153,33 +154,6 @@ def area(coord1, coord2):
     return (1 + abs(coord1[0]-coord2[0])) * (1 + abs(coord1[1] - coord2[1]))
 
 def is_valid(coord1, coord2, h_ranges, v_ranges):
-    def range_list_contains(range_list, start, end):
-        # Could optimize using bisect
-        for range in range_list:
-            if start >= range[0] and end <=range[1]:
-                return True
-        return False
-    
-    def vertical_boundary_is_valid(coord1, coord2, v_ranges):
-        x = coord1[1]
-        y1 = min(coord1[0], coord2[0])
-        y2 = max(coord1[0], coord2[0])
-        # x coordinate is not in map
-        if x not in v_ranges:
-            return False
-        if not range_list_contains(v_ranges[x], y1, y2 + 1):
-            return False
-    
-    def horizontal_boundary_is_valid(coord1, coord2, h_ranges):
-        y = coord1[0]
-        x1 = min(coord1[1], coord2[1])
-        x2 = max(coord1[1], coord2[1])
-        # x coordinate is not in map
-        if y not in h_ranges:
-            return False
-        if not range_list_contains(h_ranges[y], x1, x2 + 1):
-            return False
-        
     # check if all 4 boundary lines are valid
     if not vertical_boundary_is_valid(coord1, coord2, v_ranges):
         return False
