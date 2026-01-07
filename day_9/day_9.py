@@ -2,10 +2,10 @@ import numpy as np
 from enum import Enum, auto
 
 class Direction(Enum):
-    UP    = auto()
-    LEFT  = auto()
-    DOWN  = auto()
-    RIGHT = auto()
+    UP = 0
+    RIGHT = 1
+    DOWN = 2
+    LEFT = 3
 
 class DirectionalLine:
     def __init__(self, coord1, coord2, direction):
