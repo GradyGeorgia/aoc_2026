@@ -65,6 +65,9 @@ def is_valid(coord1, coord2, h_ranges, v_ranges):
     pass
 
 class Test(unittest.TestCase):
+    def test_directional_lines(self):
+        pass
+
     def test_example_input(self):
         input = '''7,1
 11,1
