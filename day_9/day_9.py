@@ -16,7 +16,7 @@ class DirectionalLine:
 def main():
     with open("./input.txt") as f:
         input = f.read().strip()
-    coords = [[int(x) for x in line.split(",")] for line in input.split("\n")]
+    coords = [[int(x) for x in line.split(",")[::-1]] for line in input.split("\n")]
 
     lines = coords_to_lines(coords)
     directional_lines = get_directional_lines(lines)
@@ -25,7 +25,7 @@ def main():
     t_lines = coords_to_lines(transpose_coords(coords))
     t_directional_lines = get_directional_lines(t_lines)
     v_ranges = get_h_ranges(t_directional_lines)
-
+    
     res = 0
     for i in range(len(coords)):
         for j in range(i + 1, len(coords)):
@@ -53,6 +53,8 @@ def get_h_ranges(directional_lines):
         # populate horizontal lines
         if direction == Direction.UP or direction == Direction.DOWN:
             y_coord = coord1[0]
+            if y_coord not in h_directional_points:
+                h_directional_points[y_coord] = []
             h_directional_points[y_coord].append((min(coord1[1], coord2[1]), Direction.RIGHT))
             h_directional_points[y_coord].append((max(coord1[1], coord2[1]), Direction.LEFT))
             
@@ -60,7 +62,7 @@ def get_h_ranges(directional_lines):
     h_ranges = {} # h_ranges[y]->[(x1,x2)...]
     for y_coord in h_directional_points:
         directional_points = h_directional_points[y_coord]
-        directional_points.sort()
+        directional_points.sort(key = lambda p : p[0])
 
         # create initial ranges
         ranges = []
@@ -118,7 +120,7 @@ def get_directional_lines(lines):
     def rotates_clockwise(line1, line2):
         dir1 = get_direction(line1)
         dir2 = get_direction(line2)
-        if dir2.value > dir1.value or (dir1 == Direction.RIGHT and dir2 == Direction.UP):
+        if (dir1.value + 1) % 4 == dir2.value:
             return True
         return False
     
@@ -127,7 +129,7 @@ def get_directional_lines(lines):
     for i, line in enumerate(lines):
         # is it horizontal
         if line[0][0] == line[1][0]:
-            if line[0][0] <  lines[topmost][0]:
+            if line[0][0] <  lines[topmost][0][0]:
                 topmost = i
                 
     # topmost points in, compute directions sequentially    
@@ -151,7 +153,7 @@ def is_valid(coord1, coord2, h_ranges, v_ranges):
     def range_list_contains(range_list, start, end):
         # Could optimize using bisect
         for range in range_list:
-            if start >= range[0] and end <=range[1]:
+            if start >= range[0] and end <= range[1]:
                 return True
         return False
     
@@ -162,8 +164,9 @@ def is_valid(coord1, coord2, h_ranges, v_ranges):
         # x coordinate is not in map
         if x not in v_ranges:
             return False
-        if not range_list_contains(v_ranges[x], y1, y2 + 1):
+        if not range_list_contains(v_ranges[x], y1, y2):
             return False
+        return True
     
     def horizontal_boundary_is_valid(coord1, coord2, h_ranges):
         y = coord1[0]
@@ -172,8 +175,9 @@ def is_valid(coord1, coord2, h_ranges, v_ranges):
         # x coordinate is not in map
         if y not in h_ranges:
             return False
-        if not range_list_contains(h_ranges[y], x1, x2 + 1):
+        if not range_list_contains(h_ranges[y], x1, x2):
             return False
+        return True
         
     # check if all 4 boundary lines are valid
     if not vertical_boundary_is_valid(coord1, coord2, v_ranges):
@@ -185,5 +189,6 @@ def is_valid(coord1, coord2, h_ranges, v_ranges):
     if not horizontal_boundary_is_valid(coord2, coord1, h_ranges):
         return False
     return True
+
 if __name__ == "__main__":
     main()
