@@ -144,7 +144,6 @@ def get_directional_lines(lines):
         else:
             new_direction = Direction((prev_direction.value - 1) % 4)
 
-        print(prev, next, new_direction)
         directional_lines.append(DirectionalLine(next[0], next[1], new_direction))
         
     return directional_lines
